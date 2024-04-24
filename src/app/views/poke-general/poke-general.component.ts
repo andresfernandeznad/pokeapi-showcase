@@ -25,13 +25,13 @@ export class PokeGeneralComponent {
   private offset = new BehaviorSubject<number>(0);
   pokemon$: Observable<any[]>;
   loading = false;
-  isInfiniteLoadAvailable = false;
+  isDynamicLoad = false;
 
   constructor(private _pokeService: PokeService) {
     this.pokemon$ = this.offset.pipe(
       switchMap((offset) => {
         this.loading = true;
-        return this._pokeService.getPokemonList(offset, 50).pipe(
+        return this._pokeService.getPokemonList(offset, 20).pipe(
           map((data: any) => data.results),
           switchMap((pokemons: any[]) => {
             const pokemonDetailsRequests = pokemons.map((pokemon) =>
@@ -41,14 +41,14 @@ export class PokeGeneralComponent {
               map((details: any[]) =>
                 details.map((detail) => ({
                   name: detail.name,
-                  imageUrl: detail.sprites.front_default,
+                  imageUrl: detail.sprites.other.dream_world.front_default,
                 }))
               )
             );
           })
         );
       }),
-      scan<any, any[]>((acc, value, index) => {
+      scan<any, any[]>((acc, value) => {
         this.loading = false;
         return [...acc, ...value];
       }, [])
@@ -63,12 +63,14 @@ export class PokeGeneralComponent {
   onWindowScroll() {
     const scrollPosition = window.innerHeight + window.scrollY;
     const documentHeight = document.body.scrollHeight;
-    if (this.isInfiniteLoadAvailable && scrollPosition === documentHeight) {
+
+    if (this.isDynamicLoad && scrollPosition > documentHeight - 10) {
+      console.log('test')
       this.loadMore();
     }
   }
 
   changeTheLoadingListManagement(event: MatSlideToggleChange) {
-    this.isInfiniteLoadAvailable = event.checked;
+    this.isDynamicLoad = event.checked;
   }
 }
