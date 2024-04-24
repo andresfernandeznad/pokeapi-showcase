@@ -1,1 +1,6 @@
-<p>poke-detail works!</p>
+@if (pokemon$ | async; as pokemon) {
+  <div>
+    <app-pokeapi-showcase-poke-card [type]="cardTypes.ADVANCED" [pokemon]="pokemon"></app-pokeapi-showcase-poke-card>
+  </div>
+}
+

@@ -1,6 +1,4 @@
 import { Routes } from '@angular/router';
-import { PokeGeneralComponent } from './views/poke-general/poke-general.component';
-import { PokeDetailComponent } from './views/poke-detail/poke-detail.component';
 
 export const routes: Routes = [
   {
@@ -10,11 +8,17 @@ export const routes: Routes = [
   },
   {
     path: 'pokedex',
-    component: PokeGeneralComponent,
+    loadComponent: () =>
+      import('./views/poke-general/poke-general.component').then(
+        (c) => c.PokeGeneralComponent
+      ),
   },
   {
-    path: 'pokedex/:id',
-    component: PokeDetailComponent,
+    path: 'pokedex/:name',
+    loadComponent: () =>
+      import('./views/poke-detail/poke-detail.component').then(
+        (c) => c.PokeDetailComponent
+      ),
   },
   { path: '**', redirectTo: '/pokedex' },
 ];

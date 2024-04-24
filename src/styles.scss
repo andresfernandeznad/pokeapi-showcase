@@ -49,6 +49,9 @@ $pokeapi-showcase-theme: mat.define-light-theme(
 
 :root {
   --color-primary: #fff;
+  --mdc-snackbar-container-color: #f44336;
+  --mat-snack-bar-button-color: white;
+
 }
 
 html,

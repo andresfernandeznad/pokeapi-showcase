@@ -1,0 +1,12 @@
+@if (type === cardTypes.BASIC) {
+  <div (click)="basicCardClicked()">
+    <img [src]="pokemon.imageUrl" [alt]="pokemon.name" class="w-60 h-60">
+    {{ pokemon.name }}
+  </div>
+} @else {
+  <div>ADVANCED</div>
+  <div>
+    <img [src]="pokemon.imageUrl" [alt]="pokemon.name" class="w-60 h-60">
+    {{ pokemon.name }}
+  </div>
+}

@@ -4,11 +4,8 @@
     <mat-slide-toggle (change)="changeTheLoadingListManagement($event)">Dynamic load</mat-slide-toggle>
   </header>
   <section (scroll)="loadMore()" class="grid gap-4 2xl:grid-cols-4 xl:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 justify-items-center">
-    @for (pokemon of pokemon$ | async; track pokemon.id) {
-    <div>
-      <img [src]="pokemon.imageUrl" [alt]="pokemon.name" class="w-60 h-60">
-      {{ pokemon.name }}
-    </div>
+    @for (pokemon of pokemonList$ | async; track pokemon.id) {
+    <app-pokeapi-showcase-poke-card [type]="cardTypes.BASIC" [pokemon]="pokemon" (goToDetail)="goToDetail(pokemon)"></app-pokeapi-showcase-poke-card>
     }
   </section>
   <footer>
