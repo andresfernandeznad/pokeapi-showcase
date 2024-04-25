@@ -10,6 +10,13 @@ import {
   catchError,
   of,
   throwError,
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  combineLatest,
+  tap,
+  isEmpty,
+  skipWhile,
 } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import {
@@ -18,6 +25,11 @@ import {
 } from '@angular/material/slide-toggle';
 
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatIconModule } from '@angular/material/icon';
+import { FormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 import { PokeCardComponent } from '../../shared/components/poke-card/poke-card.component';
 import { CARD_TYPES, Pokemon } from '../../shared/models/pokemon.interface';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -30,16 +42,25 @@ import { ActivatedRoute, Router } from '@angular/router';
     MatSlideToggleModule,
     MatSnackBarModule,
     PokeCardComponent,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    MatIconModule,
+    MatProgressBarModule
   ],
   templateUrl: './poke-general.component.html',
   styleUrl: './poke-general.component.scss',
 })
 export class PokeGeneralComponent implements OnInit {
   cardTypes = CARD_TYPES;
-  private offset = new BehaviorSubject<number>(0);
+  private _offset = new BehaviorSubject<number>(0);
+  private _onSearchPokemon = new BehaviorSubject<string>('');
   pokemonList$: Observable<Pokemon[]>;
+  pokemonFilteredList$: Observable<Pokemon[]>;
   loading = false;
   isDynamicLoad = false;
+  isInfiniteScrollActivated = true;
+  pokemonSearchValue = '';
 
   constructor(
     private _pokeService: PokeService,
@@ -49,26 +70,23 @@ export class PokeGeneralComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.pokemonList$ = this.offset.pipe(
+    const pokemonFilteredList$ = this._onSearchPokemon.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap((queryName) => {
+        if (queryName.trim() === '') {
+          return of([]);
+        }
+        return this._pokeService.searchPokemonByName(queryName);
+      })
+    );
+
+    const pokemonInfiniteScrollList$ = this._offset.pipe(
       switchMap((offset) => {
         this.loading = true;
-        return this._pokeService.getPokemonList(offset, 20).pipe(
-          map((data: any) => data.results),
-          switchMap((pokemonList: any[]) => {
-            const pokemonDetails$ = pokemonList.map((pokemon) =>
-              this._pokeService.getPokemonDetail(pokemon.name)
-            );
-            return forkJoin(pokemonDetails$).pipe(
-              map((pokemonDetails: any[]) =>
-                pokemonDetails.map((pokemonDetail) => ({
-                  id: pokemonDetail.id,
-                  name: pokemonDetail.name,
-                  imageUrl: pokemonDetail.sprites.other.dream_world.front_default,
-                }))
-              )
-            );
-          })
-        );
+        return this._pokeService
+          .getPokemonList(offset, 20)
+          .pipe(map((data: any) => data.results));
       }),
       scan<any, any[]>((acc, value) => {
         this.loading = false;
@@ -83,10 +101,36 @@ export class PokeGeneralComponent implements OnInit {
         return throwError(() => error);
       })
     );
+
+    this.pokemonList$ = combineLatest([
+      pokemonInfiniteScrollList$,
+      pokemonFilteredList$,
+    ]).pipe(
+      map(([pokemonInfiniteScrollList, pokemonFilteredList]) => {
+        return this._onSearchPokemon.value.trim() === ''
+          ? pokemonInfiniteScrollList
+          : pokemonFilteredList;
+      }),
+      switchMap((pokemonList: any[]) => {
+        const pokemonDetails$ = pokemonList.map((pokemon) =>
+          this._pokeService.getPokemonDetail(pokemon.name)
+        );
+        return forkJoin(pokemonDetails$).pipe(
+          map((pokemonDetails: any[]) =>
+            pokemonDetails.map((pokemonDetail) => ({
+              imageUrl:
+                pokemonDetail.sprites.other['official-artwork'].front_default,
+                ...pokemonDetail
+            }))
+          )
+        );
+      })
+    );
   }
 
   loadMore() {
-    this.offset.next(this.offset.value + 20);
+    if (this.isInfiniteScrollActivated)
+      this._offset.next(this._offset.value + 20);
   }
 
   @HostListener('window:scroll', ['$event'])
@@ -94,11 +138,7 @@ export class PokeGeneralComponent implements OnInit {
     const scrollPosition = window.innerHeight + window.scrollY;
     const documentHeight = document.body.scrollHeight;
 
-    if (
-      this.isDynamicLoad &&
-      !this.loading &&
-      scrollPosition > documentHeight - 10
-    ) {
+    if (!this.loading && scrollPosition > documentHeight - 10) {
       this.loadMore();
     }
   }
@@ -109,5 +149,16 @@ export class PokeGeneralComponent implements OnInit {
 
   goToDetail(pokemon: Pokemon) {
     this._router.navigate([`${pokemon.name}`], { relativeTo: this._route });
+  }
+
+  pokemonSearchValueChange(searchValue: string) {
+    this._onSearchPokemon.next(searchValue);
+    this.isInfiniteScrollActivated = searchValue.length === 0;
+  }
+
+  resetPokemonInputValue() {
+    this.pokemonSearchValue = '';
+    this._onSearchPokemon.next('');
+    this.isInfiniteScrollActivated = true;
   }
 }

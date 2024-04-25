@@ -1,12 +1,16 @@
 @if (type === cardTypes.BASIC) {
-  <div (click)="basicCardClicked()">
-    <img [src]="pokemon.imageUrl" [alt]="pokemon.name" class="w-60 h-60">
-    {{ pokemon.name }}
-  </div>
+<div
+  (click)="basicCardClicked()"
+  [ngClass]="'opacity-' + pokemon.types[0].type.name"
+  class="flex flex-col items-center transition ease-in-out hover:-translate-y-1 hover:scale-110 duration-300 backdrop-blur-sm py-10 px-5"
+>
+  <img [src]="pokemon.imageUrl" [alt]="pokemon.name" class="w-56 h-56" />
+  {{ pokemon.name }}
+</div>
 } @else {
-  <div>ADVANCED</div>
-  <div>
-    <img [src]="pokemon.imageUrl" [alt]="pokemon.name" class="w-60 h-60">
-    {{ pokemon.name }}
-  </div>
+<div>ADVANCED</div>
+<div>
+  <img [src]="pokemon.imageUrl" [alt]="pokemon.name" class="w-60 h-60" />
+  {{ pokemon.name }}
+</div>
 }

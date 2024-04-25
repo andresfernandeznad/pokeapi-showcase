@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, Observable, throwError } from 'rxjs';
+import { catchError, map, Observable, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -24,5 +24,17 @@ export class PokeService {
         console.error(`Error fetching details for pokemon ${name}:`, error);
         return throwError(() => new Error(`Something went wrong while fetching details for ${name}. Please try again later.`));
       }));
+  }
+
+  getAllPokemonList(): Observable<any[]> {
+    return this._http.get(`${this.apiUrl}?limit=1000`).pipe(
+      map((response: any) => response.results)
+    );
+  }
+
+  searchPokemonByName(pokemonNameSearchQuery: string): Observable<any[]> {
+    return this.getAllPokemonList().pipe(
+      map((pokemon: any[]) => pokemon.filter(pokemon => pokemon.name.includes(pokemonNameSearchQuery)))
+    );
   }
 }

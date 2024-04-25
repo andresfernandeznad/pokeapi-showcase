@@ -1,19 +1,41 @@
-<main>
-  <header>
+<main class="my-10 mx-auto w-2/3">
+  <header class="flex flex-col items-center">
     <h1 class="text-3xl font-bold underline">search filter</h1>
-    <mat-slide-toggle (change)="changeTheLoadingListManagement($event)">Dynamic load</mat-slide-toggle>
+    <mat-form-field class="">
+      <mat-label>Clearable input</mat-label>
+      <input
+        matInput
+        type="text"
+        [(ngModel)]="pokemonSearchValue"
+        (ngModelChange)="pokemonSearchValueChange($event)"
+      />
+      @if (pokemonSearchValue) {
+      <button
+        matSuffix
+        mat-icon-button
+        aria-label="Clear"
+        (click)="resetPokemonInputValue()"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+      }
+    </mat-form-field>
   </header>
-  <section (scroll)="loadMore()" class="grid gap-4 2xl:grid-cols-4 xl:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 justify-items-center">
+  <section
+    (scroll)="loadMore()"
+    class="grid gap-x-8 gap-y-16 2xl:grid-cols-4 xl:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 justify-items-center"
+  >
     @for (pokemon of pokemonList$ | async; track pokemon.id) {
-    <app-pokeapi-showcase-poke-card [type]="cardTypes.BASIC" [pokemon]="pokemon" (goToDetail)="goToDetail(pokemon)"></app-pokeapi-showcase-poke-card>
+    <app-pokeapi-showcase-poke-card
+      [type]="cardTypes.BASIC"
+      [pokemon]="pokemon"
+      (goToDetail)="goToDetail(pokemon)"
+    ></app-pokeapi-showcase-poke-card>
     }
   </section>
-  <footer>
-    @if (loading) {
-      <div>Loading...</div>
-      }
-      @if (!isDynamicLoad) {
-        <button mat-raised-button color="primary">Primary</button>
-        }
+  @if (loading) {
+  <footer class="fixed left-0 bottom-0 w-full bg-white">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </footer>
+  }
 </main>

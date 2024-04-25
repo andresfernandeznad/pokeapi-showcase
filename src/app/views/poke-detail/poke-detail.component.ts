@@ -30,10 +30,11 @@ export class PokeDetailComponent implements OnInit {
       switchMap((params) => this._pokeService.getPokemonDetail(params['name'])),
       map((pokemon) => {
         return {
-          imageUrl: pokemon.sprites.other.dream_world.front_default,
+          imageUrl: pokemon.sprites.other['official-artwork'].front_default,
           ...pokemon,
         };
-      }),catchError((error) => {
+      }),
+      catchError((error) => {
         this._snackBar.open(error.message, 'Close', {
           duration: 4000,
           verticalPosition: 'top',
