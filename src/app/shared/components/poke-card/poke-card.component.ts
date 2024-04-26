@@ -12,7 +12,7 @@ import { MatButtonModule } from '@angular/material/button';
     standalone: true,
     templateUrl: './poke-card.component.html',
     styleUrl: './poke-card.component.scss',
-    imports: [CommonModule, PokeIdPipe, NameFormatterPipe, MatIconModule, MatButtonModule]
+    imports: [CommonModule, PokeIdPipe, NameFormatterPipe]
 })
 export class PokeCardComponent {
 
@@ -28,9 +28,5 @@ export class PokeCardComponent {
 
   basicCardClicked() {
     this.goToDetailEventEmitter.emit(this.pokemon);
-  }
-
-  goBack() {
-    this._router.navigate(['..'], {relativeTo: this._route});
   }
 }

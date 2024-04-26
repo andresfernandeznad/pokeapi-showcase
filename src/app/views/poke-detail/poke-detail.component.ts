@@ -6,11 +6,13 @@ import { PokeCardComponent } from '../../shared/components/poke-card/poke-card.c
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, ActivatedRoute } from '@angular/router';
 import { PokeService } from '../../services/poke.service';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-pokeapi-showcase-poke-detail',
   standalone: true,
-  imports: [CommonModule, PokeCardComponent],
+  imports: [CommonModule, PokeCardComponent, MatIconModule, MatButtonModule],
   templateUrl: './poke-detail.component.html',
   styleUrl: './poke-detail.component.scss',
 })
@@ -43,5 +45,9 @@ export class PokeDetailComponent implements OnInit {
         return throwError(() => error);
       })
     );
+  }
+
+  goBack() {
+    this._router.navigate(['..'], {relativeTo: this._route});
   }
 }

@@ -33,7 +33,11 @@
         [pokemon]="pokemon"
         (goToDetail)="goToDetail(pokemon)"
       ></app-pokeapi-showcase-poke-card>
-      } @empty { <div>THE LIST IS EMPTY</div>}
+      } @empty { <div class="w-full flex items-center col-span-4 p-10 max-[1200px]:flex-col">
+        <img src="assets/psyduck.png" class="max-h-96 basis-1/4"/>
+        <h1 class="ml-5 basis-3/4 text-5xl max-[1200px]:text-2xl">No pokemon found</h1>
+      </div>
+    }
   }
 
   </section>

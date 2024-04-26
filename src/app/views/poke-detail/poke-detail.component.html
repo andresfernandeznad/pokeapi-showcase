@@ -1,6 +1,15 @@
-@if (pokemon$ | async; as pokemon) {
-  <div>
-    <app-pokeapi-showcase-poke-card [type]="cardTypes.ADVANCED" [pokemon]="pokemon"></app-pokeapi-showcase-poke-card>
+<div class="flex w-full justify-center">
+  <div class="pt-10">
+    <button mat-raised-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
   </div>
-}
+  @if (pokemon$ | async; as pokemon) {
+  <app-pokeapi-showcase-poke-card
+    [type]="cardTypes.ADVANCED"
+    [pokemon]="pokemon"
+  ></app-pokeapi-showcase-poke-card>
+  }
+</div>
+
 
