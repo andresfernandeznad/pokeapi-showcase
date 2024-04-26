@@ -1,9 +1,10 @@
 <main class="my-10 mx-auto w-2/3">
   <header class="flex flex-col items-center">
-    <h1 class="text-3xl font-bold underline">search filter</h1>
-    <mat-form-field class="">
-      <mat-label>Clearable input</mat-label>
+    <img src="assets/pokemon-logo.png" class="w-56"/>
+    <mat-form-field class="w-full py-10 font-flexo-demi">
+      <mat-label class="font-flexo-demi">Search your pokemon</mat-label>
       <input
+      class="font-flexo-demi"
         matInput
         type="text"
         [(ngModel)]="pokemonSearchValue"
@@ -23,19 +24,22 @@
   </header>
   <section
     (scroll)="loadMore()"
-    class="grid gap-x-8 gap-y-16 2xl:grid-cols-4 xl:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 justify-items-center"
+    class="grid gap-x-8 gap-y-16 min-[2000px]:grid-cols-5 2xl:grid-cols-4 xl:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 justify-items-center"
   >
-    @for (pokemon of pokemonList$ | async; track pokemon.id) {
-    <app-pokeapi-showcase-poke-card
-      [type]="cardTypes.BASIC"
-      [pokemon]="pokemon"
-      (goToDetail)="goToDetail(pokemon)"
-    ></app-pokeapi-showcase-poke-card>
-    }
+  @if (pokemonList$ | async; as pokemonList) {
+    @for (pokemon of pokemonList; track pokemon.id) {
+      <app-pokeapi-showcase-poke-card
+        [type]="cardTypes.BASIC"
+        [pokemon]="pokemon"
+        (goToDetail)="goToDetail(pokemon)"
+      ></app-pokeapi-showcase-poke-card>
+      } @empty { <div>THE LIST IS EMPTY</div>}
+  }
+
   </section>
   @if (loading) {
-  <footer class="fixed left-0 bottom-0 w-full bg-white">
-    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-  </footer>
+    <footer class="fixed left-0 bottom-0 w-full">
+      <div class="pokemon"></div>
+    </footer>
   }
 </main>

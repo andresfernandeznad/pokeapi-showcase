@@ -7,24 +7,17 @@ import {
   map,
   scan,
   forkJoin,
-  catchError,
   of,
-  throwError,
   debounceTime,
   distinctUntilChanged,
-  filter,
   combineLatest,
   tap,
-  isEmpty,
-  skipWhile,
 } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import {
   MatSlideToggleChange,
   MatSlideToggleModule,
 } from '@angular/material/slide-toggle';
-
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
@@ -40,7 +33,6 @@ import { ActivatedRoute, Router } from '@angular/router';
   imports: [
     CommonModule,
     MatSlideToggleModule,
-    MatSnackBarModule,
     PokeCardComponent,
     MatFormFieldModule,
     MatInputModule,
@@ -64,13 +56,13 @@ export class PokeGeneralComponent implements OnInit {
 
   constructor(
     private _pokeService: PokeService,
-    private _snackBar: MatSnackBar,
     private _router: Router,
     private _route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
     const pokemonFilteredList$ = this._onSearchPokemon.pipe(
+      tap(() => this.loading = true),
       debounceTime(300),
       distinctUntilChanged(),
       switchMap((queryName) => {
@@ -89,17 +81,8 @@ export class PokeGeneralComponent implements OnInit {
           .pipe(map((data: any) => data.results));
       }),
       scan<any, any[]>((acc, value) => {
-        this.loading = false;
         return [...acc, ...value];
-      }, []),
-      catchError((error) => {
-        this._snackBar.open(error.message, 'Close', {
-          duration: 3000,
-          verticalPosition: 'top',
-          horizontalPosition: 'right',
-        });
-        return throwError(() => error);
-      })
+      }, [])
     );
 
     this.pokemonList$ = combineLatest([
@@ -112,6 +95,7 @@ export class PokeGeneralComponent implements OnInit {
           : pokemonFilteredList;
       }),
       switchMap((pokemonList: any[]) => {
+        if (!pokemonList.length) return of([])
         const pokemonDetails$ = pokemonList.map((pokemon) =>
           this._pokeService.getPokemonDetail(pokemon.name)
         );
@@ -124,7 +108,8 @@ export class PokeGeneralComponent implements OnInit {
             }))
           )
         );
-      })
+      }),
+      tap(() => this.loading = false)
     );
   }
 

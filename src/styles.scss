@@ -47,8 +47,10 @@ $pokeapi-showcase-theme: mat.define-light-theme(
 @tailwind components;
 @tailwind utilities;
 
+@import url('./assets/fonts/stylesheet.css');
+
 :root {
-  --color-primary: #fff;
+  --color-primary: #ffffff;
   --color-secondary: #acb4b4;
   --color-tertiary: #393939;
   --color-normal: #bfb16e;
@@ -98,14 +100,38 @@ $pokeapi-showcase-theme: mat.define-light-theme(
   --mat-snack-bar-button-color: white;
 }
 
-html,
-body {
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
   height: 100%;
-  background: url(../src/assets/body_white_bg.png);
 }
 body {
+  min-height: 100%;
+  font-family: 'Flexo-demi';
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
+  display: block;
+  background-image: url(../src/assets/body_white_bg.png);
+  width: 110%;
+  height: 110%;
+
+  -webkit-filter: blur(16px);
+  -moz-filter: blur(16px);
+  -o-filter: blur(16px);
+  -ms-filter: blur(16px);
+  filter: blur(16px);
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
 .normal,
