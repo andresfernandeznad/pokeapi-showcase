@@ -1,69 +1,16 @@
-@if (type === cardTypes.BASIC) {
-<div
-  (click)="basicCardClicked()"
-  [ngClass]="'' + pokemon.types[0].type.name"
-  class="flex flex-col items-center transition ease-in-out hover:-translate-y-1 hover:scale-110 duration-300 backdrop-blur-sm py-10 px-5 rounded-[20px] cursor-pointer"
->
-  <img [src]="pokemon.imageUrl" [alt]="pokemon.name" class="w-56" />
-  <div class="w-full pt-2">
-    <p class="flexo-bold">N.º {{ pokemon.id | pokeId }}</p>
-    <h5 class="font-flexo-demi text-2xl">{{ pokemon.name | nameFormatter }}</h5>
-  </div>
-  <div class="flex pt-5">
-    @for (type of pokemon.types; track $index) {
-    <p
-      [ngClass]="type.type.name"
-      class="shadow-custom rounded-[20px] p-2 text-slate-100"
-    >
-      {{ type.type.name | uppercase }}
-    </p>
-    }
-  </div>
-</div>
-} @else {
-<div class="grid grid-cols-2 gap-x-2 gap-y-5 pt-10">
-  <h1 class="font-flexo-medium text-3xl justify-self-end">
-    {{ pokemon.name | nameFormatter }}
-  </h1>
-  <h1 class="font-flexo-medium text-3xl text-neutral-500">
-    N.º {{ pokemon.id | pokeId }}
-  </h1>
-  <img [src]="pokemon.imageUrl" [alt]="pokemon.name" class="w-full max-[1200px]:w-96 max-[1200px]:col-span-2 max-[1200px]:justify-self-center" />
-  <div class="flex flex-col items-center justify-between max-[1200px]:col-span-2 max-[1200px]:justify-self-center">
+@if (pokemon) {
+  @if (type === cardTypes.BASIC) {
     <div
-      class="grid grid-cols-2 h-[70%] max-[1200px]:h-full w-full m-auto bg-neutral-200 shadow-custom rounded-[5px] p-5"
+      (click)="basicCardClicked()"
+      [ngClass]="'' + pokemon.types[0].type.name"
+      class="flex flex-col items-center transition ease-in-out hover:-translate-y-1 hover:scale-110 duration-300 backdrop-blur-sm py-10 px-5 rounded-[20px] cursor-pointer"
     >
-      <div>
-        <p class="text-xl">Abilities</p>
-        @for (ability of pokemon.abilities; track $index) {
-        <p class="font-flexo-medium text-2xl text-neutral-500">
-          {{ ability.ability.name | nameFormatter }}
-        </p>
-        }
+      <img [src]="pokemon?.imageUrl" [alt]="pokemon.name" class="w-56" />
+      <div class="w-full pt-2">
+        <p class="flexo-bold">N.º {{ pokemon?.id | pokeId }}</p>
+        <h5 class="font-flexo-demi text-2xl">{{ pokemon.name | nameFormatter }}</h5>
       </div>
-      <div>
-        <div>
-          <p class="text-xl">Weight</p>
-          <p class="font-flexo-medium text-2xl text-neutral-500">
-            {{ pokemon.weight / 10 }} kg
-          </p>
-        </div>
-        <div>
-          <p class="text-xl">Height</p>
-          <p class="font-flexo-medium text-2xl text-neutral-500">
-            {{ pokemon.height / 10 }} m
-          </p>
-        </div>
-      </div>
-      <div class="flex col-span-2 items-center justify-between max-[1200px]:flex-wrap">
-        <p class="text-xl">Sprites</p>
-        <img class="w-16" [src]="pokemon.sprites.front_default" /><img class="w-16"
-          [src]="pokemon.sprites.back_default"
-        /><img class="w-16" [src]="pokemon.sprites.other.showdown.front_default" /><img class="w-16"
-          [src]="pokemon.sprites.other.showdown.back_default"
-        />
-      </div>
-      <div class="flex col-span-2 items-center">
+      <div class="flex pt-5">
         @for (type of pokemon.types; track $index) {
         <p
           [ngClass]="type.type.name"
@@ -74,6 +21,62 @@
         }
       </div>
     </div>
-  </div>
-</div>
+    } @else {
+    <div class="grid grid-cols-2 gap-x-2 gap-y-5 pt-10">
+      <h1 class="font-flexo-medium text-3xl justify-self-end">
+        {{ pokemon.name | nameFormatter }}
+      </h1>
+      <h1 class="font-flexo-medium text-3xl text-neutral-500">
+        N.º {{ pokemon.id | pokeId }}
+      </h1>
+      <img [src]="pokemon.imageUrl" [alt]="pokemon.name" class="w-full max-[1200px]:w-96 max-[1200px]:col-span-2 max-[1200px]:justify-self-center" />
+      <div class="flex flex-col items-center justify-between max-[1200px]:col-span-2 max-[1200px]:justify-self-center">
+        <div
+          class="grid grid-cols-2 h-[70%] max-[1200px]:h-full w-full m-auto bg-neutral-200 shadow-custom rounded-[5px] p-5"
+        >
+          <div>
+            <p class="text-xl">Abilities</p>
+            @for (ability of pokemon.abilities; track $index) {
+            <p class="font-flexo-medium text-2xl text-neutral-500">
+              {{ ability.ability.name | nameFormatter }}
+            </p>
+            }
+          </div>
+          <div>
+            <div>
+              <p class="text-xl">Weight</p>
+              <p class="font-flexo-medium text-2xl text-neutral-500">
+                {{ pokemon.weight / 10 }} kg
+              </p>
+            </div>
+            <div>
+              <p class="text-xl">Height</p>
+              <p class="font-flexo-medium text-2xl text-neutral-500">
+                {{ pokemon.height / 10 }} m
+              </p>
+            </div>
+          </div>
+          <div class="flex col-span-2 items-center justify-between max-[1200px]:flex-wrap">
+            <p class="text-xl">Sprites</p>
+            <img class="w-16" [src]="pokemon.sprites.front_default" /><img class="w-16"
+              [src]="pokemon.sprites.back_default"
+            /><img class="w-16" [src]="pokemon.sprites.other.showdown.front_default" /><img class="w-16"
+              [src]="pokemon.sprites.other.showdown.back_default"
+            />
+          </div>
+          <div class="flex col-span-2 items-center">
+            @for (type of pokemon.types; track $index) {
+            <p
+              [ngClass]="type.type.name"
+              class="shadow-custom rounded-[20px] p-2 text-slate-100"
+            >
+              {{ type.type.name | uppercase }}
+            </p>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+    }
+
 }

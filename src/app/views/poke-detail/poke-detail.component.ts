@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CARD_TYPES, Pokemon } from '../../shared/models/pokemon.interface';
-import { catchError, map, Observable, switchMap, tap, throwError } from 'rxjs';
+import { catchError, map, Observable, switchMap, throwError } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { PokeCardComponent } from '../../shared/components/poke-card/poke-card.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
