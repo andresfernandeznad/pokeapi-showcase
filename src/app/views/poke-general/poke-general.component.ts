@@ -12,10 +12,10 @@ import {
   distinctUntilChanged,
   combineLatest,
   tap,
+  pipe,
 } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import {
-  MatSlideToggleChange,
   MatSlideToggleModule,
 } from '@angular/material/slide-toggle';
 import { MatIconModule } from '@angular/material/icon';
@@ -47,7 +47,7 @@ export class PokeGeneralComponent implements OnInit {
   cardTypes = CARD_TYPES;
   private _offset = new BehaviorSubject<number>(0);
   private _onSearchPokemon = new BehaviorSubject<string>('');
-  pokemonList$: Observable<Pokemon[]>;
+  pokemonList$: Observable<Pokemon[]> = of([]);
   pokemonFilteredList$: Observable<Pokemon[]>;
   loading = false;
   isDynamicLoad = false;
@@ -66,7 +66,7 @@ export class PokeGeneralComponent implements OnInit {
       debounceTime(300),
       distinctUntilChanged(),
       switchMap((queryName) => {
-        if (queryName.trim() === '') {
+        if (!queryName || queryName.trim() === '') {
           return of([]);
         }
         return this._pokeService.searchPokemonByName(queryName);
@@ -77,8 +77,7 @@ export class PokeGeneralComponent implements OnInit {
       switchMap((offset) => {
         this.loading = true;
         return this._pokeService
-          .getPokemonList(offset, 20)
-          .pipe(map((data: any) => data.results));
+          .getPokemonList(offset, 20) ?? of([])
       }),
       scan<any, any[]>((acc, value) => {
         return [...acc, ...value];
@@ -91,8 +90,8 @@ export class PokeGeneralComponent implements OnInit {
     ]).pipe(
       map(([pokemonInfiniteScrollList, pokemonFilteredList]) => {
         return this._onSearchPokemon.value.trim() === ''
-          ? pokemonInfiniteScrollList
-          : pokemonFilteredList;
+        ? pokemonInfiniteScrollList
+        : pokemonFilteredList
       }),
       switchMap((pokemonList: any[]) => {
         if (!pokemonList.length) return of([])
@@ -128,10 +127,6 @@ export class PokeGeneralComponent implements OnInit {
     }
   }
 
-  changeTheLoadingListManagement(event: MatSlideToggleChange) {
-    this.isDynamicLoad = event.checked;
-  }
-
   goToDetail(pokemon: Pokemon) {
     this._router.navigate([`${pokemon.name}`], { relativeTo: this._route });
   }
@@ -141,6 +136,9 @@ export class PokeGeneralComponent implements OnInit {
     this.isInfiniteScrollActivated = searchValue.length === 0;
   }
 
+  /**
+   * Reset the pokemon search input and switch to infinite scroll load
+   */
   resetPokemonInputValue() {
     this.pokemonSearchValue = '';
     this._onSearchPokemon.next('');

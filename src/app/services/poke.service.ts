@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { effect, Injectable, signal } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { catchError, map, Observable, of } from 'rxjs';
+import { catchError, map, Observable, of, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -32,6 +32,7 @@ export class PokeService {
     return this._http
       .get(`${this.apiUrl}?offset=${offset}&limit=${limit}`)
       .pipe(
+        map((response: any) => response.results),
         catchError((error) => {
           console.error('Error fetching pokemon', error);
           this.addErrorNotificationMessage('Something went wrong while fetching the pokemon list. Please try again later.');
