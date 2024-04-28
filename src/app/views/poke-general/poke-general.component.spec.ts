@@ -16,8 +16,6 @@ describe('PokeGeneralComponent', () => {
     'getPokemonDetail',
   ]);
 
-  let httpSpy = jasmine.createSpyObj('HttpClient', ['get']);
-
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [PokeGeneralComponent],
@@ -30,7 +28,6 @@ describe('PokeGeneralComponent', () => {
     }).compileComponents();
 
     pokeServiceSpy = TestBed.inject(PokeService) as jasmine.SpyObj<PokeService>;
-    httpSpy = TestBed.inject(HttpClient) as jasmine.SpyObj<HttpClient>;
     fixture = TestBed.createComponent(PokeGeneralComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

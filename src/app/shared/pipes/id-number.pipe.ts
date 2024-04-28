@@ -6,6 +6,7 @@ import { Pipe, PipeTransform } from "@angular/core";
 })
 export class PokeIdPipe implements PipeTransform {
   transform(value: number): string {
-    return value.toString().padStart(4, '0');
+    if (value) return value.toString().padStart(4, '0');
+    return ''
   }
 }

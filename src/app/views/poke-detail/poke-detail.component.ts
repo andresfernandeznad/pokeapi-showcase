@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CARD_TYPES, Pokemon } from '../../shared/models/pokemon.interface';
-import { catchError, map, Observable, switchMap, throwError } from 'rxjs';
+import { map, Observable, of, switchMap, tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { PokeCardComponent } from '../../shared/components/poke-card/poke-card.component';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, ActivatedRoute } from '@angular/router';
 import { PokeService } from '../../services/poke.service';
 import { MatButtonModule } from '@angular/material/button';
@@ -22,27 +21,18 @@ export class PokeDetailComponent implements OnInit {
 
   constructor(
     private _pokeService: PokeService,
-    private _snackBar: MatSnackBar,
     private _router: Router,
     private _route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
     this.pokemon$ = this._route.params.pipe(
-      switchMap((params) => this._pokeService.getPokemonDetail(params['name'])),
+      switchMap((params) => this._pokeService.getPokemonDetail(params['name']) ?? of({})),
       map((pokemon) => {
         return {
-          imageUrl: pokemon.sprites.other['official-artwork'].front_default,
+          imageUrl: pokemon.sprites?.other['official-artwork']?.front_default ?? '',
           ...pokemon,
         };
-      }),
-      catchError((error) => {
-        this._snackBar.open(error.message, 'Close', {
-          duration: 4000,
-          verticalPosition: 'top',
-          horizontalPosition: 'right',
-        });
-        return throwError(() => error);
       })
     );
   }

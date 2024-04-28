@@ -15,14 +15,12 @@ import {
   pipe,
 } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import {
-  MatSlideToggleModule,
-} from '@angular/material/slide-toggle';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import {MatProgressBarModule} from '@angular/material/progress-bar';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { PokeCardComponent } from '../../shared/components/poke-card/poke-card.component';
 import { CARD_TYPES, Pokemon } from '../../shared/models/pokemon.interface';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -38,7 +36,7 @@ import { ActivatedRoute, Router } from '@angular/router';
     MatInputModule,
     FormsModule,
     MatIconModule,
-    MatProgressBarModule
+    MatProgressBarModule,
   ],
   templateUrl: './poke-general.component.html',
   styleUrl: './poke-general.component.scss',
@@ -62,7 +60,7 @@ export class PokeGeneralComponent implements OnInit {
 
   ngOnInit(): void {
     const pokemonFilteredList$ = this._onSearchPokemon.pipe(
-      tap(() => this.loading = true),
+      tap(() => (this.loading = true)),
       debounceTime(300),
       distinctUntilChanged(),
       switchMap((queryName) => {
@@ -76,8 +74,7 @@ export class PokeGeneralComponent implements OnInit {
     const pokemonInfiniteScrollList$ = this._offset.pipe(
       switchMap((offset) => {
         this.loading = true;
-        return this._pokeService
-          .getPokemonList(offset, 20) ?? of([])
+        return this._pokeService.getPokemonList(offset, 20) ?? of([]);
       }),
       scan<any, any[]>((acc, value) => {
         return [...acc, ...value];
@@ -90,11 +87,11 @@ export class PokeGeneralComponent implements OnInit {
     ]).pipe(
       map(([pokemonInfiniteScrollList, pokemonFilteredList]) => {
         return this._onSearchPokemon.value.trim() === ''
-        ? pokemonInfiniteScrollList
-        : pokemonFilteredList
+          ? pokemonInfiniteScrollList
+          : pokemonFilteredList;
       }),
       switchMap((pokemonList: any[]) => {
-        if (!pokemonList.length) return of([])
+        if (!pokemonList.length) return of([]);
         const pokemonDetails$ = pokemonList.map((pokemon) =>
           this._pokeService.getPokemonDetail(pokemon.name)
         );
@@ -102,13 +99,14 @@ export class PokeGeneralComponent implements OnInit {
           map((pokemonDetails: any[]) =>
             pokemonDetails.map((pokemonDetail) => ({
               imageUrl:
-                pokemonDetail.sprites.other['official-artwork'].front_default,
-                ...pokemonDetail
+                pokemonDetail?.sprites?.other['official-artwork']
+                  ?.front_default,
+              ...pokemonDetail,
             }))
           )
         );
       }),
-      tap(() => this.loading = false)
+      tap(() => (this.loading = false))
     );
   }
 

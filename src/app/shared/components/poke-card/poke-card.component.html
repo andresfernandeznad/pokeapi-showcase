@@ -1,4 +1,4 @@
-@if (pokemon) {
+@if (pokemon && pokemon.id) {
   @if (type === cardTypes.BASIC) {
     <div
       (click)="basicCardClicked()"
@@ -58,10 +58,10 @@
           </div>
           <div class="flex col-span-2 items-center justify-between max-[1200px]:flex-wrap">
             <p class="text-xl">Sprites</p>
-            <img class="w-16" [src]="pokemon.sprites.front_default" /><img class="w-16"
-              [src]="pokemon.sprites.back_default"
-            /><img class="w-16" [src]="pokemon.sprites.other.showdown.front_default" /><img class="w-16"
-              [src]="pokemon.sprites.other.showdown.back_default"
+            <img class="w-16" [src]="pokemon?.sprites?.front_default ?? ''" /><img class="w-16"
+              [src]="pokemon?.sprites?.back_default ?? ''"
+            /><img class="w-16" [src]="pokemon?.sprites?.other.showdown.front_default ?? ''" /><img class="w-16"
+              [src]="pokemon?.sprites?.other?.showdown?.back_default ?? ''"
             />
           </div>
           <div class="flex col-span-2 items-center">
@@ -78,5 +78,6 @@
       </div>
     </div>
     }
-
+} @else {
+  <div class="ml-5 pt-10">INVALID DATA FOUND</div>
 }
